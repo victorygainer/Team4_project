@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tjoeun.vo.ContentVO">
+
+	<insert id="contentInsert" parameterType="co">
+		insert into content (idx, userID, subject, content) 
+		values (content_idx_seq.nextval, #{userID}, #{subject}, #{content})
+	</insert>
+	
+	<!-- 전체 글의 개수를 얻어온다. -->
+	<select id="selectContentCount" resultType="int">
+		select count(*) from content
+	</select>
+	
+	<!-- 1페이지 분량의 글 목록을 얻어온다. -->
+	<select id="selectContentList" parameterType="java.util.HashMap" resultType="co">
+		<![CDATA[
+			select * from (
+				select rownum rnum, TT.* from (
+					select * from content
+				) TT where rownum <= #{endNo}
+			) where rnum >= #{startNo}
+		]]>
+	</select>
+	
+	<update id="contentStatus" parameterType="co">
+		update content set contentStatus = 'true' where idx = #{idx}
+	</update>
+	
+	<select id="selectCountMulti" parameterType="param" resultType="int">
+		select count(*) from content where subject like '%'||#{item}||'%'
+	</select>
+	
+	<select id="selectListMulti" parameterType="param" resultType="co">
+		<![CDATA[
+			select * from (
+				select rownum rnum, TT.* from (
+					select * from content where subject like '%'||#{item}||'%'
+				) TT where rownum <= #{endNo}
+			) where rnum >= #{startNo}
+		]]>
+	</select>
+		<!-- 조회수를 증가시킨다. -->
+	<update id="contentIncrement" parameterType="int">
+		update content set hit = hit + 1 where idx = #{idx}
+	</update>
+	
+	<!-- 글 1건을 얻어온다. -->
+	<select id="selectContentByIdx" parameterType="int" resultType="co">
+		select * from content where idx = #{idx}
+	</select>
+	
+	<!-- 글 1건을 수정 -->
+	<update id="contentUpdate" parameterType="co">
+		update content set subject = #{subject}, content = #{content} where idx = #{idx}
+	</update>
+	
+	<!-- 글 1건을 삭제 -->
+	<delete id="contentDelete" parameterType="int">
+		delete from content where idx = #{idx}
+	</delete>
+	
+	<select id="checkContentOwner" parameterType="int" resultType="co">
+		select * from content where idx = #{idx}
+	</select>
+	 
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
