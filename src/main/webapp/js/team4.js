@@ -1,5 +1,4 @@
 //	JavaScript Ajax 구현
-//	XMLHttpRequest: JavaScript 객체로 http를 통한 데이터 송수신을 지원해주는 객체 => XHR
 const searchRequest = new XMLHttpRequest(); // 검색용
 const insertRequest = new XMLHttpRequest(); // 입력용
 
@@ -31,59 +30,32 @@ function searchFunction() {
 	searchRequest.onreadystatechange = searchProcess; // ()를 쓰면 안된다.
 }
 
-//	Ajax 요청이 완료되면 실행되는 함수
+//	Ajax 요청이 완료 시 실행
 function searchProcess() {
-	// console.log('searchFunction() 함수에서 요청한 Ajax가 완료되면 자동으로 실행되는 함수');
-
-	// XMLHttpRequest 객체의 readyState
-	// 0: 아직 실행되지 않음
-	// 1: 로딩중
-	// 2: 로딩됨
-	// 3: 통신중
-	// 4: 통신완료
-	// console.log('readyState: ', searchRequest.readyState)
-
-	// XMLHttpRequest 객체의 status
-	// 200: 수신성공
-	// 3xx: 금지
-	// 4xx: 페이지없음
-	// 5xx: 서버오류
-	// console.log('status: ', searchRequest.status)
-
-	// 통신이 정상적으로 완료 되어음을 확인하고 필요한 작업을 실행한다.
+	// console.log('searchFunction()');
 	if (searchRequest.readyState == 4 && searchRequest.status == 200) {
 		// console.log('responseText: ', searchRequest.responseText);
-
-		// 서블릿에서 리턴된 문자열을 JavaScript 객체로 변환하기 위해 괄호를 붙여 eval() 함수로
-		// 실행해서 객체에 저장한다.
 		let object = eval('(' + searchRequest.responseText + ')');
 		// console.log(object);
-		// JavaScript 객체에서 result 라는 key에 할당된 데이터를 얻어온다. => 화면에 출력할 데이터
 		let result = object.result;
 		// console.log(result);
 
-		// 서블릿에서 수신한 데이터를 출력하기 위해 <tbody> 태그를 얻어온다.
+		// 데이터 출력 테이블
 		let table = document.getElementById('ajaxTable');
 		// 새로 검색되는 데이터가 표시되어야 하므로 이전에 <tbody> 태그에 들어있던 내용은 지운다.
 		table.innerHTML = '';
 
-		// 데이터의 개수만큼 반복하며 테이블에 행을 만들어 추가한다.
 		for (let i = 0; i < result.length; i++) {
 			// <tbody>에 넣어줄 행을 만든다.
 			let row = table.insertRow(i);
-			// 한 행에 출력할 열의 개수만큼 반복하며 행에 열을 추가한다.
 			for (let j = 0; j < result[i].length; j++) {
-				// 행에 넣어줄 열을 만든다.
 				let cell = row.insertCell(j);
-				// 열에 화면에 표시할 데이터를 넣어준다.
 				cell.innerHTML = result[i][j].value;
 			}
 		}
 	}
 }
 
-//	페이지가 로드되자마자 화면에 전체 데이터가 보여지게 하기 위해서 onload 이벤트에서 
-//	searchFunction() 함수를 실행한다.
 onload = function() {
 	searchFunction();
 }
